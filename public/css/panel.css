@@ -1,0 +1,76 @@
+.project-panel-list{
+	width: 100%;
+	margin-bottom: 25px;
+}
+
+.project-panel-list-button{
+	width: 85%;
+	min-width: 250px;
+}
+
+.project-panel-list-dropdown{
+	width: 15%;
+	min-width: 50px;
+}
+
+.project-panel-list-dropdown-menu{
+	right: 0;
+}
+
+.project-panel-new-button{
+	margin-top: 25px;
+}
+
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 90%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.document-panel-list{
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+.document-panel-list-button{
+  width: 70%;
+  min-width: 100px;
+}
+
+.document-panel-list-dropdown{
+  width: 30%;
+  min-width: 20px;
+}
+
+.document-panel-list-dropdown-menu{
+  right: 0;
+}
+
+.option-button{
+  margin-top: 25px;
+}
+
+.document-button-image{
+  width: 100%;
+  border-radius: 10px;
+}
+
+.chat-frame{
+  margin-top: 20px;
+  height: 720px; 
+  width: 100%;
+  min-width: 360px;
+}

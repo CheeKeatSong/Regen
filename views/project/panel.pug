@@ -1,0 +1,72 @@
+extends ../layout
+
+block content
+  .row
+    .col-md-4.col-xs-6
+      h1 #{title}
+    .col-md-5
+    .col-md-3.col-xs-6
+      button(class='btn btn-default btn-block project-panel-new-button', data-toggle="modal", data-target="#newProjectModal") New Project 
+        span(class="glyphicon glyphicon-plus")
+  br
+  #newProjectModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newProjectModalLabel', aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h3#newProjectModalLabel.modal-title New project
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+        .modal-body
+          form(id='new-project-form', method='POST', action='/project/new')
+            input(type='hidden', name='_csrf', value=_csrf)
+            .form-group
+              label.col-form-label(for='project-name') Project name:
+              input#project-name.form-control(type='text', name='projectName', autofocus, required)
+            .form-group
+              label.col-form-label(for='project-description') Description:
+              textarea#project-description.form-control(name='projectDescription', autofocus, required)
+            .modal-footer
+              button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+              button.btn.btn-primary(type='submit') Confirm
+
+  mixin generateButton(project)
+    .btn-group.project-panel-list.dropdown
+      a(class='btn btn-primary project-panel-list-button' href='project/'+project._id) #{project.name} 
+      a(class="btn btn-primary dropdown-toggle project-panel-list-dropdown" id="menu1" data-toggle="dropdown" )
+        span(class="glyphicon glyphicon-option-vertical")
+      ul(class="dropdown-menu project-panel-list-dropdown-menu" role="menu" arica-labelledby="menu1")
+        li(role="presentation")
+          a(role="menuitem" tabindex="-1" href='project/'+project._id) Open
+        li(role="presentation")
+          a(role="menuitem" tabindex="-1" data-toggle="modal" data-target="#projectDetailsModal"+i) Details
+        li(role="presentation" class="divider")
+        li(role="presentation")
+          a(role="menuitem" tabindex="-1" href="#") Settings
+
+    // Modal
+    .modal.fade(id='projectDetailsModal'+i, tabindex='-1', role='dialog', aria-labelledby='projectDetailsModalCenterTitle', aria-hidden='true')
+      .modal-dialog.modal-dialog-centered(role='document')
+        .modal-content
+          .modal-header
+            h3#projectDetailsModalLongTitle.modal-title #{project.name}
+              button.close(type='button', data-dismiss='modal', aria-label='Close')
+                span(aria-hidden='true') ×
+          .modal-body
+            p(style='white-space:pre;')
+              h4 Description
+              | #{project.description} 
+              hr
+              h4 Access
+              - for (var k = project.access.length - 1; k >= 0; k--) {
+                  p Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: #{project.access[k].emailAddress}
+                  p Permission : #{project.access[k].permission}
+                  if (k - 1 >= 0)
+                    br
+              - }
+          .modal-footer
+            button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+
+  .list-group
+    - for (i = 0; i < project.length; i++){
+      +generateButton(project[i])
+    - }

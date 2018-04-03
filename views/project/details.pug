@@ -1,0 +1,126 @@
+extends ../layout
+
+block content
+  .row
+    .col-md-3.col-xs-6.col-sm-6
+      h1 #{title}
+    .col-md-6.col-sm-2
+    .col-md-3.col-xs-6.col-sm-4.option-button.btn-group(role="group")
+        button(type='button' class='btn btn-default col-xs-4', title="New Document", data-toggle="modal", data-target="#newDocumentModal")
+          span(class="glyphicon glyphicon-plus")
+        button(type='button' class='btn btn-default col-xs-4', title="Share Project", data-toggle="modal", data-target="#shareProjectModal")
+          span(class="glyphicon glyphicon-share")
+        button(type='button' class='btn btn-default col-xs-4', title="Delete Project", data-toggle="modal", data-target="#deleteProjectModal")
+          span(class="glyphicon glyphicon-trash")
+  br
+
+  #newDocumentModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='newProjectModalLabel', aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h3#newDocumentModalLabel.modal-title New document
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+        .modal-body
+          form(id='new-document-form', method='POST', action='/doc/new')
+            input(type='hidden', name='_csrf', value=_csrf)
+            input#project-id(type="hidden" name="projectID", value=project._id)
+            .form-group
+              label.col-form-label(for='document-name') Document Name:
+              input#document-name.form-control(type='text', name='documentName', autofocus, required)
+            .form-group
+              label.col-form-label(for='document-type') Document Type:
+              br
+              select.form-control(name='documentType')
+                option(value='SRS') SRS
+            .form-group
+              label.col-form-label(for='document-description') Description:
+              textarea#document-description.form-control(name='documentDescription', autofocus, required)
+            .modal-footer
+              button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+              button.btn.btn-primary(type='submit') Confirm
+
+  #shareProjectModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='shareProjectModalCenterTitle', aria-hidden='true')
+    .modal-dialog.modal-dialog-centered(role='document')
+      .modal-content
+        .modal-header
+          h3#shareProjectModalLongTitle.modal-title Share Project Access
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+              span(aria-hidden='true') ×
+        .modal-body
+          form(id='share-project-form', method='POST', action='/project/share')
+            input(type='hidden', name='_csrf', value=_csrf)
+            input#project-id(type="hidden" name="projectID", value=project._id)
+            .form-group
+              label.col-form-label(for='email-address') Email Address
+              input#share-email-address.form-control(type='text', name='emailAddress', autofocus, required)
+            .form-group
+              label.col-form-label(for='permission') Permission:
+              br
+              select.form-control(name='permission')
+                option(value='Write') Write
+                option(value='Read') Read
+            .modal-footer
+              button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+              button.btn.btn-primary(type='submit') Confirm
+
+  #deleteProjectModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='deleteProjectModalCenterTitle', aria-hidden='true')
+    .modal-dialog.modal-dialog-centered(role='document')
+      .modal-content
+        .modal-header
+          h3#deleteProjectModalLongTitle.modal-title Delete Project
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+              span(aria-hidden='true') ×
+        .modal-body
+          p(style='white-space:pre;')
+            p Delete project '#{project.name}'?
+            p <b>WARNING!</b> Action cannot be undone.
+          form(id='delete-project-form', method='POST', action='/project/delete')
+            input(type='hidden', name='_csrf', value=_csrf)
+            input(type="hidden" name="projectID" value=project._id)
+            .modal-footer
+              button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+              button.btn.btn-primary(type='submit') Confirm
+
+      mixin generateDocumentButton(projectDocument)
+        .col-xs-6.col-sm-4.col-md-3
+          if (projectDocument.type === 'SRS')
+             input(type="image", class="document-button-image", src="/images/srs-icon.png", title=''+projectDocument.description)
+          else
+             // no other type of document at the moment
+          .btn-group.document-panel-list.dropdown
+            a(class='btn btn-info document-panel-list-button', title=''+projectDocument.description+'', href='../doc/'+projectDocument._id) #{projectDocument.name} 
+            a(class="btn btn-info dropdown-toggle document-panel-list-dropdown" id="menu1" data-toggle="dropdown" )
+              span(class="glyphicon glyphicon-option-vertical")
+            ul(class="dropdown-menu document-panel-list-dropdown-menu" role="menu" arica-labelledby="menu1")
+              li(role="presentation")
+                a(role="menuitem" tabindex="-1" href='doc/'+projectDocument._id) Open
+                a(role="menuitem" tabindex="-1" data-toggle="modal" data-target="#deleteDocumentModal"+i) Delete
+              li(role="presentation" class="divider")
+              li(role="presentation")
+                a(role="menuitem" tabindex="-1" href="#") Settings
+
+        .modal.fade(id='deleteDocumentModal'+i, tabindex='-1', role='dialog', aria-labelledby='deleteDocumentModalCenterTitle', aria-hidden='true')
+          .modal-dialog.modal-dialog-centered(role='document')
+            .modal-content
+              .modal-header
+                h3#deleteDocumentModalLongTitle.modal-title Delete Document
+                  button.close(type='button', data-dismiss='modal', aria-label='Close')
+                    span(aria-hidden='true') ×
+              .modal-body
+                p(style='white-space:pre;')
+                  p Delete document '#{projectDocument.name}'?
+                  p <b>WARNING!</b> Action cannot be undone.
+                form(id='delete-document-form', method='POST', action='/doc/delete')
+                  input(type='hidden', name='_csrf', value=_csrf)
+                  input(type="hidden" name="projectID" value=project._id)
+                  input(type="hidden" name="documentID" value=projectDocument._id)
+                  .modal-footer
+                    button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+                    button.btn.btn-primary(type='submit') Confirm
+
+  .list-group
+    .row
+      - for (i = 0; i < project.document.length; i++){
+        +generateDocumentButton(project.document[i])
+      - }
