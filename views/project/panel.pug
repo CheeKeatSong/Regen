@@ -39,6 +39,8 @@ block content
           a(role="menuitem" tabindex="-1" href='project/'+project._id) Open
         li(role="presentation")
           a(role="menuitem" tabindex="-1" data-toggle="modal" data-target="#projectDetailsModal"+i) Details
+        li(role="presentation")
+          a(role="menuitem" tabindex="-1" data-toggle="modal" data-target="#editProjectModal"+i) Edit
         li(role="presentation" class="divider")
         li(role="presentation")
           a(role="menuitem" tabindex="-1" href="#") Settings
@@ -65,6 +67,27 @@ block content
               - }
           .modal-footer
             button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+
+    .modal.fade(id='editProjectModal'+i, tabindex='-1', role='dialog', aria-labelledby='editProjectModalCenterTitle', aria-hidden='true')
+      .modal-dialog.modal-dialog-centered(role='document')
+        .modal-content
+          .modal-header
+            h3#newDocumentModalLabel.modal-title Edit project
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+              span(aria-hidden='true') ×
+          .modal-body
+            form(id='edit-project-form', method='POST', action='/project/edit')
+              input(type='hidden', name='_csrf', value=_csrf)
+              input#project-id(type="hidden" name="projectID", value=project._id)
+              .form-group
+                label.col-form-label(for='project-name') Project Name:
+                input#document-name.form-control(type='text', name='projectName', autofocus, required)
+              .form-group
+                label.col-form-label(for='project-description') Description:
+                textarea#document-description.form-control(name='projectDescription', autofocus, required)
+              .modal-footer
+                button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+                button.btn.btn-primary(type='submit') Confirm
 
   .list-group
     - for (i = 0; i < project.length; i++){

@@ -143,10 +143,12 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
  */
 app.get('/project', passportConfig.isAuthenticated, projectController.getPanel);
 app.post('/project/new', passportConfig.isAuthenticated, projectController.postCreateProject);
+app.post('/project/edit', passportConfig.isAuthenticated, projectController.postEditProject);
 app.post('/project/delete', passportConfig.isAuthenticated, projectController.postDeleteProject);
 app.get('/project/:id', passportConfig.isAuthenticated, projectController.getProjectDetails);
 app.post('/project/share', passportConfig.isAuthenticated, projectController.postShareProjectAccess);
 app.post('/doc/new', passportConfig.isAuthenticated, projectController.postCreateDocument);
+app.post('/doc/edit', passportConfig.isAuthenticated, projectController.postEditDocument);
 app.post('/doc/delete', passportConfig.isAuthenticated, projectController.postDeleteDocument);
 
 /**

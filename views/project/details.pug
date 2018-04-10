@@ -95,10 +95,33 @@ block content
             ul(class="dropdown-menu document-panel-list-dropdown-menu" role="menu" arica-labelledby="menu1")
               li(role="presentation")
                 a(role="menuitem" tabindex="-1" href='doc/'+projectDocument._id) Open
+                a(role="menuitem" tabindex="-1" data-toggle="modal" data-target="#editDocumentModal"+i) Edit
                 a(role="menuitem" tabindex="-1" data-toggle="modal" data-target="#deleteDocumentModal"+i) Delete
               li(role="presentation" class="divider")
               li(role="presentation")
                 a(role="menuitem" tabindex="-1" href="#") Settings
+
+        .modal.fade(id='editDocumentModal'+i, tabindex='-1', role='dialog', aria-labelledby='deleteDocumentModalCenterTitle', aria-hidden='true')
+          .modal-dialog.modal-dialog-centered(role='document')
+            .modal-content
+              .modal-header
+                h3#newDocumentModalLabel.modal-title Edit document
+                button.close(type='button', data-dismiss='modal', aria-label='Close')
+                  span(aria-hidden='true') ×
+              .modal-body
+                form(id='edit-document-form', method='POST', action='/doc/edit')
+                  input(type='hidden', name='_csrf', value=_csrf)
+                  input#project-id(type="hidden" name="projectID", value=project._id)
+                  .form-group
+                    label.col-form-label(for='document-name') Document Name:
+                    input#document-name.form-control(type='text', name='documentName', autofocus, required)
+                  .form-group
+                    label.col-form-label(for='document-description') Description:
+                    textarea#document-description.form-control(name='documentDescription', autofocus, required)
+                  .modal-footer
+                    button.btn.btn-secondary(type='button', data-dismiss='modal') Cancel
+                    button.btn.btn-primary(type='submit') Confirm
+
 
         .modal.fade(id='deleteDocumentModal'+i, tabindex='-1', role='dialog', aria-labelledby='deleteDocumentModalCenterTitle', aria-hidden='true')
           .modal-dialog.modal-dialog-centered(role='document')

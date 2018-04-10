@@ -84,6 +84,33 @@ const mongoose = require('mongoose');
  };
 
 /**
+ * POST /project/edit
+ * Edit a project.
+ */
+ exports.postEditProject = (req, res, next) => {
+
+ 	Project.findOne({ _id: mongoose.Types.ObjectId(req.body.projectID) }, (err, project) => {
+ 		if (err) { return next(err); }
+ 		if (project) {
+            // check user access right
+            var accessRight = checkAccessRight(project, req.user.email);
+            if (accessRight !== 'Admin') {
+            	req.flash('errors', { msg: 'You need to have admin right to execute the action.' });
+            	return res.redirect('/project');
+            }
+            Project.update({ _id: mongoose.Types.ObjectId(req.body.projectID)}, {"$set": { "name": req.body.projectName, "description": req.body.projectDescription }}, (err, user) => {
+            	if (err) { return next(err); }
+            	req.flash('info', { msg: 'The project has been edit.' });
+            	res.redirect('/project');
+            });
+        }else{
+        	req.flash('errors', { msg: 'Project does not exists' });
+        	return res.redirect('/project');
+        }
+    })
+ };
+
+/**
  * POST /project/delete
  * Delete project.
  */
@@ -207,6 +234,46 @@ const mongoose = require('mongoose');
  	// 		});
  	// 	});
  	// });
+ };
+
+/**
+ * POST /doc/edit
+ * Edit a document.
+ */
+ exports.postEditDocument = (req, res, next) => {
+
+ 	req.assert('documentName', 'Document name cannot be blank').notEmpty();
+ 	req.assert('documentName', 'Document name length must be between 5 - 35').isLength({ min: 5, max: 35 });
+ 	req.assert('documentDescription', 'Description cannot be blank').notEmpty();
+ 	req.assert('documentDescription', 'Document description length must be between 15 - 300').isLength({ min: 15, max: 300 });
+
+ 	const errors = req.validationErrors();
+
+ 	if (errors) {
+ 		req.flash('errors', errors);
+ 		return res.redirect('/project');
+ 	}
+
+ 	Project.findOne({ _id: mongoose.Types.ObjectId(req.body.projectID) }, (err, project) => {
+ 		if (err) { return next(err); }
+ 		if (project) {
+            // check user access right
+            var accessRight = checkAccessRight(project, req.user.email);
+            if (accessRight !== 'Admin') {
+            	req.flash('errors', { msg: 'You need to have admin right to execute the action.' });
+            	return res.redirect('/project/' + req.body.projectID);
+            }
+            Project.update({ _id: mongoose.Types.ObjectId(req.body.projectID), "document._id": mongoose.Types.ObjectId(req.body.documentID)}, {"$set": { "document": { "name": req.body.documentName, "description": req.body.documentDescription }}}, (err, user) => {
+            	if (err) { return next(err); }
+            	req.flash('info', { msg: 'The document has been update.' });
+            	res.redirect('/project/' + req.body.projectID);
+            });
+        }else{
+        	req.flash('errors', { msg: 'Project does not exists' });
+        	return res.redirect('/project/' + req.body.projectID);
+        }
+    })
+
  };
 
  /**
