@@ -7,7 +7,6 @@
     "url": ""
   },
   "author": "CK Song",
-  "license": "MIT",
   "scripts": {
     "start": "node app.js",
     "test": "mocha --reporter spec",
